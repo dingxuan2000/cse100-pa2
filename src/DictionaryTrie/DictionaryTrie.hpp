@@ -40,5 +40,7 @@ class DictionaryTrie {
     /* TODO: add function header */
     ~DictionaryTrie();
 };
+// Declare the trie node as a class type
+class TrieNode {};
 
 #endif  // DICTIONARY_TRIE_HPP
