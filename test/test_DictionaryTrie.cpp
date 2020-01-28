@@ -25,7 +25,17 @@ TEST(DictTrieTests, EMPTY_TEST) {
 }
 TEST(DictTrieTests, INSERT) {
     DictionaryTrie dict;
-    ASSERT_EQ(dict.insert("ab", 2), true);
+    ASSERT_EQ(dict.insert("a", 2), true);
+    EXPECT_EQ(dict.insert("abc", 3), true);
+    EXPECT_EQ(dict.insert("abd", 3), true);
+    ASSERT_EQ(dict.insert("abdf", 3), true);
+}
+TEST(DictTrieTests, FIND) {
+    DictionaryTrie dict;
+    dict.insert("a", 2);
+    dict.insert("ab", 2);
+    EXPECT_EQ(dict.find("a"), true);
+    ASSERT_EQ(dict.find("ab"), true);
 }
 
 /* TODO */

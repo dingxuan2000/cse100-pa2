@@ -21,14 +21,15 @@ class TSTNode {
     TSTNode* left;
     TSTNode* middle;
     TSTNode* right;
-    TSTNode() {
+    TSTNode() : frequency(0) {
         left = middle = right = 0;
-        frequency = 0;
+        // frequency = 0;
         // isEnd = false;
     }
-    TSTNode(const char& character, const int& freq) {
-        letter = character;
-        frequency = freq;
+    TSTNode(const char& character, const int& freq)
+        : letter(character), frequency(freq) {
+        // letter = character;
+        // frequency = freq;
         left = middle = right = 0;
         // isEnd = false;
     }
@@ -52,6 +53,7 @@ class DictionaryTrie {
     // TODO: add private members and helper methods here
     TSTNode* root;
     // static void deleteAll(TSTNode* n);
+    // TSTNode* startNode(string prefix);
 
   public:
     /* TODO: add function header */
