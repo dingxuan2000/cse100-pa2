@@ -17,15 +17,18 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
     //当遇到duplicate word时，return false
     if (this->find(word) == true) return false;
     //如果当前node不是end of word, 那么copy of freq就是0, 否则, cfreq是freq的值
+    if (this->root == NULL) {
+        if (word.length() == 1)
+            this->root = new TSTNode(word[0], freq);
+        else {
+            this->root = new TSTNode(word[0], 0);
+        }
+    }
     int i = 0;
     int cfreq;
-    // if (i != word.length() - 1)
-    //     cfreq = 0;
-    // else
-    //     cfreq = freq;
-    //我们需要Insert整个word, 所以当超过了word的length的话，就结束insert
     TSTNode* curr;
     curr = this->root;
+
     while (i < word.length()) {
         // case1: empty trie, insert the whole string as the only one word in
         // the trie, 如果current node是空的话，就create a new node.
@@ -49,22 +52,8 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
                 i++;
             }
         }
-        //当i到了整个要insert的word的最后一个char时
-        // if (i == word.length() - 1)
-        //     return true;
-        // else
-        //     return false;
     }
     return true;  //当出了while循环，说明已经遍历了整个word，把word的每个char都insert进去了
-    // TSTNode* currentptr = this->root;
-    // if (currentptr == 0) {
-    //     for (int i = 0; i < word.length(); i++) {
-    //         currentptr = new TSTNode(word[i], freq);
-    //         currentptr = currentptr->middle;
-    //     }
-    // }
-
-    return false;
 }
 
 /* TODO */
@@ -102,6 +91,7 @@ bool DictionaryTrie::find(string word) const {
 /* TODO */
 vector<string> DictionaryTrie::predictCompletions(string prefix,
                                                   unsigned int numCompletions) {
+    //
     return {};
 }
 
@@ -110,9 +100,18 @@ std::vector<string> DictionaryTrie::predictUnderscores(
     string pattern, unsigned int numCompletions) {
     return {};
 }
+// static void deleteAll(TSTNode* n) {
+//     if (n == 0) return;
+//     deleteAll(n->left);
+//     deleteAll(n->middle);
+//     deleteAll(n->right);
+//     delete n;
+// }
 
 /* TODO */
-DictionaryTrie::~DictionaryTrie() {}
+DictionaryTrie::~DictionaryTrie() {
+    // deleteAll(this->root);
+}
 // TSTNode* newNode(char letter, int freq) {
 //     TSTNode* newNode = new TSTNode();
 //     newNode->setLetter(letter);

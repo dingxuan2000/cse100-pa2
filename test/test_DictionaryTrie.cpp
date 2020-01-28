@@ -23,5 +23,9 @@ TEST(DictTrieTests, EMPTY_TEST) {
     DictionaryTrie dict;
     ASSERT_EQ(dict.find("abrakadabra"), false);
 }
+TEST(DictTrieTests, INSERT) {
+    DictionaryTrie dict;
+    ASSERT_EQ(dict.insert("ab", 2), true);
+}
 
 /* TODO */
