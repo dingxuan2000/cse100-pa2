@@ -19,6 +19,8 @@ using namespace std;
 class DictionaryTrie {
   private:
     // TODO: add private members and helper methods here
+    TSTNode* root;
+
   public:
     /* TODO: add function header */
     DictionaryTrie();
@@ -41,6 +43,37 @@ class DictionaryTrie {
     ~DictionaryTrie();
 };
 // Declare the trie node as a class type
-class TrieNode {};
+class TSTNode {
+  private:
+    int frequency;
+    char letter;
+    // bool isEnd;
+
+  public:
+    TSTNode* left;
+    TSTNode* middle;
+    TSTNode* right;
+    TSTNode() {
+        left = middle = right = 0;
+        frequency = 0;
+        // isEnd = false;
+    }
+    TSTNode(const char& character, const int& freq) {
+        letter = character;
+        frequency = freq;
+        left = middle = right = 0;
+        // isEnd = false;
+    }
+    void setFreq(const int& f) { frequency = f; }
+    int getFreq() { return frequency; }
+    void setLetter(const char& c) { letter = c; }
+    char getLetter() { return letter; }
+    // void setIsEnd(bool isEnd){isEnd = }
+    ~TSTNode() {
+        delete left;
+        delete middle;
+        delete right;
+    }
+};
 
 #endif  // DICTIONARY_TRIE_HPP

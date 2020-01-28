@@ -1,0 +1,8 @@
+Reading file: data/short_dict.txt
+Enter a prefix/pattern to search for:
+Enter a number of completions:
+a big
+a bit
+a better
+a bad
+Continue? (y/n)

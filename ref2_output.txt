@@ -1,0 +1,40 @@
+Reading file: data/shuffled_freq_dict.txt
+Enter a prefix/pattern to search for:
+Enter a number of completions:
+and process until
+and fixes
+and understand how
+and state law
+and a radio
+and represent the
+and selfsacrifice
+and endearing
+and backcountry
+and writers of
+and know i
+and of little
+and the security council
+and palliative care
+and we do need
+and the comfort of
+and moved a
+and amman
+and constraining
+and in poor
+and die with
+and global change
+and i think the country
+and that and the
+and to extend the
+and made a dash
+and the logistics of
+and i do not mean
+and when he got out
+and he had been in
+and his colleagues developed a
+and then i knew it
+and they had a great
+and came back with his
+and it is common to
+and slammed it against the
+Continue? (y/n)
