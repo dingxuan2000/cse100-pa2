@@ -65,7 +65,7 @@ struct cmpFreq {
 class DictionaryTrie {
   private:
     // TODO: add private members and helper methods here
-    TSTNode* root;
+    // TSTNode* root;
     // static void deleteAll(TSTNode* n);
     // TSTNode* startNode(string prefix);
     typedef priority_queue<pair<string, int>*, vector<pair<string, int>*>,
@@ -74,6 +74,7 @@ class DictionaryTrie {
     void findLeaf(string prefix, TSTNode* curr, pq);
 
   public:
+    TSTNode* root;
     TSTNode* startNode(string prefix);
     /* TODO: add function header */
     DictionaryTrie();

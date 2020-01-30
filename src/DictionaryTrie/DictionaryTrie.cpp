@@ -19,32 +19,40 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
     //如果当前node不是end of word, 那么copy of freq就是0, 否则,
     // cfreq是freq的值
     if (this->root == NULL) {
+        // insert directly
+
         if (word.length() == 1) {
-            auto* newNode = new TSTNode(word[0], freq);
+            TSTNode* newNode = new TSTNode(word[0], freq);
             this->root = newNode;
             return true;
         } else {
-            auto* newNode = new TSTNode(word[0], 0);
+            TSTNode* newNode = new TSTNode(word[0], 0);
+
             this->root = newNode;
+            TSTNode* curr = root;
+            int i = 1;
+            int cfreq;
+            while (i < word.length()) {
+                if (i != word.length() - 1)
+                    cfreq = 0;
+                else
+                    cfreq = freq;
+                curr->middle = new TSTNode(word[i], cfreq);
+                curr = curr->middle;
+                i++;
+            }
+            return true;
         }
     }
+
     int i = 0;
     int cfreq;
     TSTNode* curr;
     curr = this->root;
 
     while (i < word.length()) {
-        // case1: empty trie, insert the whole string as the only one word in
-        // the trie, 如果current node是空的话，就create a new node.
-        // if (curr == NULL) {
-        //     if (i != word.length() - 1)
-        //         cfreq = 0;
-        //     else
-        //         cfreq = freq;
-        //     curr = new TSTNode(word[i], cfreq);
-        // } else {
-        //当这个trie不是空的，首先比较root的char和word的第一个char:
-        //如果想要insert word的第一个char比root大的话，去找root右边的孩子
+        // case1: empty trie, insert the whole string as the only one word
+        // in the trie, 如果current node是空的话，就create a new node.
         if (curr->getLetter() < word[i]) {
             if (curr->right != 0)
                 curr = curr->right;
@@ -53,10 +61,10 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
                     cfreq = 0;
                 else
                     cfreq = freq;
-                auto* newNode = new TSTNode(word[i], cfreq);
+                TSTNode* newNode = new TSTNode(word[i], cfreq);
                 curr->right = newNode;
                 curr = curr->right;
-                i++;
+                // i++;
             }
 
         }
@@ -72,7 +80,7 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
                 auto* newNode = new TSTNode(word[i], cfreq);
                 curr->left = newNode;
                 curr = curr->left;
-                i++;
+                // i++;
             }
 
         } else {
@@ -80,19 +88,23 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
                 curr = curr->middle;
                 i++;
             } else {
-                if (i != word.length() - 1)
+                i++;
+                if (i > word.length() - 1)
+                    return true;
+                else if (i != word.length() - 1)
                     cfreq = 0;
                 else
                     cfreq = freq;
-                auto* newNode = new TSTNode(word[i], cfreq);
+
+                TSTNode* newNode = new TSTNode(word[i], cfreq);
                 curr->middle = newNode;
                 curr = curr->middle;
-                i++;
             }
         }
         //}
     }
-    return true;  //当出了while循环，说明已经遍历了整个word，把word的每个char都insert进去了
+    return true;
+    //当出了while循环，说明已经遍历了整个word，把word的每个char都insert进去了
 }
 
 /* TODO */
@@ -134,7 +146,10 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     // 从下到上的去将每个char组成一个string.
     vector<string> vtr;
     pq queue;
-    if (startNode(prefix)->middle == 0) {
+    // Segmentation fault
+    if (startNode(prefix) == 0) {
+        return vtr;
+    } else if (startNode(prefix)->middle == 0) {
         if (startNode(prefix)->getFreq() == 0)
             return vtr;
         else {
@@ -142,27 +157,30 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
             return vtr;
         }
     }
-    // when the end of prefix's node has middle child, then still need to check
-    // if the startNode has frequencies, if the prefix is also a word, make as
-    // a pair, and push into the queue.
-    if (startNode(prefix)->getFreq() != 0) {
-        pair<string, int>* ptr =
-            new pair<string, int>(prefix, startNode(prefix)->getFreq());
-        queue.push(ptr);
-    }
-
-    // When the middle subtree is not null
-    TSTNode* start = startNode(prefix)->middle;
-    findLeaf(prefix, start, queue);
-    for (int i = 0; i < numCompletions; i++) {
-        pair<string, int>* currPair;
-        if (!queue.empty()) {
-            currPair = queue.top();
-            queue.pop();
+    // When the middle
+    else {
+        // when the end of prefix's node has middle child, then still need to
+        // check if the startNode has frequencies, if the prefix is also a word,
+        // make as a pair, and push into the queue.
+        if (startNode(prefix)->getFreq() != 0) {
+            pair<string, int>* ptr =
+                new pair<string, int>(prefix, startNode(prefix)->getFreq());
+            queue.push(ptr);
         }
-        vtr.push_back(currPair->first);
+
+        // When the middle subtree is not null
+        TSTNode* start = startNode(prefix)->middle;
+        findLeaf(prefix, start, queue);
+        for (int i = 0; i < numCompletions; i++) {
+            pair<string, int>* currPair;
+            if (!queue.empty()) {
+                currPair = queue.top();
+                queue.pop();
+            }
+            vtr.push_back(currPair->first);
+        }
+        return vtr;
     }
-    return vtr;
 }
 void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq queue) {
     if (curr == 0) return;  // maybe the problem
@@ -171,7 +189,9 @@ void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq queue) {
             new pair<string, int>(prefix + curr->getLetter(), curr->getFreq());
         queue.push(ptr);
     }
+
     findLeaf(prefix, curr->left, queue);
+
     findLeaf(prefix, curr->right, queue);
     if (curr->middle != 0) {
         findLeaf(prefix + curr->getLetter(), curr->middle, queue);
@@ -195,23 +215,31 @@ DictionaryTrie::~DictionaryTrie() {}
 TSTNode* DictionaryTrie::startNode(string prefix) {
     TSTNode* ptr;
     ptr = this->root;
-    if (ptr == NULL) return NULL;
+    if (ptr == nullptr) return nullptr;
     // int index = 0;
     int i = 0;
-    while ((ptr != NULL) && (i < prefix.length())) {
+    while ((ptr != nullptr) && (i < prefix.length())) {
         if (ptr->getLetter() < prefix[i]) {
             ptr = ptr->right;
+            cerr << "After going right, ptr is now: " << ptr->getLetter()
+                 << endl;
 
         } else if (prefix[i] < ptr->getLetter()) {
             ptr = ptr->left;
+            cerr << "After going left, ptr is now: " << ptr->getLetter()
+                 << endl;
+            ;
         } else {
+            i++;
             // When found the char in word, then go to the middle child, and
             // go to the next char of the word
-            if ((i == prefix.length() - 1) && (ptr->getFreq() > 0))
-                return ptr;
+            if ((i == prefix.length() - 1) && (ptr->middle->getFreq() > 0))
+                return ptr->middle;
             else {
                 ptr = ptr->middle;
-                i++;
+                cerr << "After going in the middle, ptr is now: " << ptr
+                     << " | " << (int)(ptr->getLetter()) << endl;
+                // i++;
             }
         }
     }
