@@ -1,7 +1,9 @@
 /**
  * TODO: File HEADER
  *
- * Author:
+ * Author: Xuan Ding, xding@ucsd.edu
+ *          Qilong Li, qil009@ucsd.edu
+ * Use googleTest to test find, insert, predictCompletion functions.
  */
 
 #include <algorithm>
