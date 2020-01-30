@@ -1,5 +1,9 @@
 /*
  * TODO: File Header
+ * Author:  Xuan Ding, xding@ucsd.edu
+ *          Qilong Li, qil009@ucsd.edu
+ * this file stores data into dictionaryTrie and allows user to search words by
+ * prefixes. It will display list of strings of prefix sorted by frequency.
  */
 #include <fstream>
 #include <iostream>
@@ -73,13 +77,13 @@ int main(int argc, char** argv) {
         cout << "Enter a number of completions:" << endl;
         cin >> numberOfCompletions;
 
-        // TODO
+        // TODO: call predictCompletions() to return the vector, concludes all
+        // the valid word
         vector<string> vet;
         vet = dt->predictCompletions(word, numberOfCompletions);
         for (int i = 0; i < vet.size(); i++) {
             cout << vet.at(i) << endl;
         }
-        // for (string s : vet) cout << s << "\n" << endl;
 
         cout << "Continue? (y/n)" << endl;
         cin >> cont;

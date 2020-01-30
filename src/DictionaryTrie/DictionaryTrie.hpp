@@ -1,7 +1,11 @@
 /**
  * TODO: File Header
  *
- * Author:
+ * Author:  Xuan Ding, xding@ucsd.edu
+ *          Qilong Li, qil009@ucsd.edu
+ * This file provides DictionaryTrie function delcarations as well as the
+ * TSTNode class to the DictionaryTrie.cpp file. And a comparator struct to help
+ * sorting the priority_queue.
  */
 #ifndef DICTIONARY_TRIE_HPP
 #define DICTIONARY_TRIE_HPP
@@ -12,40 +16,28 @@
 #include <vector>
 
 using namespace std;
+// The TSTNode class, for creating new TSTnode in Trie.
 class TSTNode {
   private:
     int frequency;
     char letter;
-    // bool isEnd;
 
   public:
     TSTNode* left;
     TSTNode* middle;
     TSTNode* right;
-    TSTNode() : frequency(0) {
-        left = middle = right = 0;
-        // frequency = 0;
-        // isEnd = false;
-    }
+    TSTNode() : frequency(0) { left = middle = right = 0; }
     TSTNode(const char& character, const int& freq)
         : letter(character), frequency(freq) {
-        // letter = character;
-        // frequency = freq;
         left = middle = right = 0;
-        // isEnd = false;
     }
     void setFreq(const int& f) { frequency = f; }
     int getFreq() { return frequency; }
     void setLetter(const char& c) { letter = c; }
     char getLetter() { return letter; }
-
-    // ~TSTNode() {
-    //     delete left;
-    //     delete middle;
-    //     delete right;
-    // }
 };
-
+// The cmpFreq struct, to help compare the elements in pair, and can sorting
+// pairs in priority_queue.
 struct cmpFreq {
     bool operator()(pair<string, int>& w1, pair<string, int>& w2) const {
         // when two words' frequencies are different
@@ -74,19 +66,31 @@ class DictionaryTrie {
     void findLeaf(string prefix, TSTNode* curr, pq& queue);
 
   public:
-    // TSTNode* root;
-    // TSTNode* startNode(string prefix);
-    // void findLeaf(string prefix, TSTNode* curr, pq& queue);
-    /* TODO: add function header */
+    /* TODO: add function header
+     * initialized object with root = 0,
+     * initialized object with char and frequency
+     */
     DictionaryTrie();
 
-    /* TODO: add function header */
+    /* TODO: add function header
+     * this function take a parameter of string and int it allows user to insert
+     * string and frequency into the dictionaryTrie , if insert is successful
+     * returns true returns false otherwise.
+     */
     bool insert(string word, unsigned int freq);
 
-    /* TODO: add function header */
+    /* TODO: add function header
+     * this function take a parameter of string, allows user search a string in
+     * this dictionaryTrie returns true when a string is found, False otherwise.
+     */
     bool find(string word) const;
 
-    /* TODO: add function header */
+    /* TODO: add function header
+     * This function takes parameter of string and int. It will return a vector
+     * sized of the integer argument and contains list of strings sorted by
+     * their frequency used. If two strings have the same frequency, strings
+     * will be sorted alphabetically.
+     */
     vector<string> predictCompletions(string prefix,
                                       unsigned int numCompletions);
 
@@ -94,7 +98,9 @@ class DictionaryTrie {
     vector<string> predictUnderscores(string pattern,
                                       unsigned int numCompletions);
 
-    /* TODO: add function header */
+    /* TODO: add function header
+     * Destructor, delete all the memory of the nodes in TST.
+     */
     ~DictionaryTrie();
 };
 // Declare the trie node as a class type
