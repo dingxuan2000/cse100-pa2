@@ -39,11 +39,11 @@ class TSTNode {
     void setLetter(const char& c) { letter = c; }
     char getLetter() { return letter; }
 
-    ~TSTNode() {
-        delete left;
-        delete middle;
-        delete right;
-    }
+    // ~TSTNode() {
+    //     delete left;
+    //     delete middle;
+    //     delete right;
+    // }
 };
 
 struct cmpFreq {

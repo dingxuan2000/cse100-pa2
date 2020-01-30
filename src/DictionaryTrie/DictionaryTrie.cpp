@@ -240,5 +240,5 @@ TSTNode* DictionaryTrie::startNode(string prefix) {
         }
     }
 
-    return nullptr;
+    return nullptr;  // return ptr; because ptr now is nullptr.
 }
