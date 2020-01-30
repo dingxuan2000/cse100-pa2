@@ -185,7 +185,7 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         return vtr;
     }
 }
-void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq queue) {
+void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq& queue) {
     if (curr == 0) return;  // maybe the problem
     if (curr->getFreq() > 0) {
         // pair<string, int>* ptr =

@@ -76,7 +76,7 @@ class DictionaryTrie {
   public:
     TSTNode* root;
     TSTNode* startNode(string prefix);
-    void findLeaf(string prefix, TSTNode* curr, pq);
+    void findLeaf(string prefix, TSTNode* curr, pq& queue);
     /* TODO: add function header */
     DictionaryTrie();
 
