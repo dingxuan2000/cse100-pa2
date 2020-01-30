@@ -47,14 +47,14 @@ class TSTNode {
 };
 
 struct cmpFreq {
-    bool operator()(pair<string, int>* w1, pair<string, int>* w2) const {
+    bool operator()(pair<string, int>& w1, pair<string, int>& w2) const {
         // when two words' frequencies are different
-        if (w1->second != w2->second) {
-            return w1->second < w2->second;
+        if (w1.second != w2.second) {
+            return w1.second < w2.second;
         }
         // When the frequencies are same, compare the words
         else {
-            return w1->first > w2->first;
+            return w1.first > w2.first;
         }
     }
 };
@@ -68,14 +68,15 @@ class DictionaryTrie {
     // TSTNode* root;
     // static void deleteAll(TSTNode* n);
     // TSTNode* startNode(string prefix);
-    typedef priority_queue<pair<string, int>*, vector<pair<string, int>*>,
+    typedef priority_queue<pair<string, int>, vector<pair<string, int>>,
                            cmpFreq>
         pq;
-    void findLeaf(string prefix, TSTNode* curr, pq);
+    // void findLeaf(string prefix, TSTNode* curr, pq);
 
   public:
     TSTNode* root;
     TSTNode* startNode(string prefix);
+    void findLeaf(string prefix, TSTNode* curr, pq);
     /* TODO: add function header */
     DictionaryTrie();
 

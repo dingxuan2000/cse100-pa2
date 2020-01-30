@@ -163,21 +163,24 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         // check if the startNode has frequencies, if the prefix is also a word,
         // make as a pair, and push into the queue.
         if (startNode(prefix)->getFreq() != 0) {
-            pair<string, int>* ptr =
-                new pair<string, int>(prefix, startNode(prefix)->getFreq());
-            queue.push(ptr);
+            // pair<string, int>* ptr =
+            //     new pair<string, int>(prefix, startNode(prefix)->getFreq());
+            queue.push(make_pair(prefix, startNode(prefix)->getFreq()));
         }
 
         // When the middle subtree is not null
         TSTNode* start = startNode(prefix)->middle;
         findLeaf(prefix, start, queue);
         for (int i = 0; i < numCompletions; i++) {
-            pair<string, int>* currPair;
+            pair<string, int> currPair;
             if (!queue.empty()) {
                 currPair = queue.top();
                 queue.pop();
+            } else {
+                break;
             }
-            vtr.push_back(currPair->first);
+
+            vtr.push_back(currPair.first);
         }
         return vtr;
     }
@@ -185,13 +188,13 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
 void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq queue) {
     if (curr == 0) return;  // maybe the problem
     if (curr->getFreq() > 0) {
-        pair<string, int>* ptr =
-            new pair<string, int>(prefix + curr->getLetter(), curr->getFreq());
-        queue.push(ptr);
+        // pair<string, int>* ptr =
+        //     new pair<string, int>(prefix + curr->getLetter(),
+        //     curr->getFreq());
+        queue.push(make_pair(prefix + curr->getLetter(), curr->getFreq()));
     }
 
     findLeaf(prefix, curr->left, queue);
-
     findLeaf(prefix, curr->right, queue);
     if (curr->middle != 0) {
         findLeaf(prefix + curr->getLetter(), curr->middle, queue);
@@ -215,34 +218,27 @@ DictionaryTrie::~DictionaryTrie() {}
 TSTNode* DictionaryTrie::startNode(string prefix) {
     TSTNode* ptr;
     ptr = this->root;
-    if (ptr == nullptr) return nullptr;
+    if (ptr == NULL) return nullptr;
     // int index = 0;
     int i = 0;
-    while ((ptr != nullptr) && (i < prefix.length())) {
+    while ((ptr != NULL) && (i < prefix.length())) {
         if (ptr->getLetter() < prefix[i]) {
             ptr = ptr->right;
-            cerr << "After going right, ptr is now: " << ptr->getLetter()
-                 << endl;
 
         } else if (prefix[i] < ptr->getLetter()) {
             ptr = ptr->left;
-            cerr << "After going left, ptr is now: " << ptr->getLetter()
-                 << endl;
-            ;
+
         } else {
-            i++;
             // When found the char in word, then go to the middle child, and
             // go to the next char of the word
-            if ((i == prefix.length() - 1) && (ptr->middle->getFreq() > 0))
-                return ptr->middle;
+            if ((i == prefix.length() - 1))
+                return ptr;
             else {
                 ptr = ptr->middle;
-                cerr << "After going in the middle, ptr is now: " << ptr
-                     << " | " << (int)(ptr->getLetter()) << endl;
-                // i++;
+                i++;
             }
         }
     }
 
-    return NULL;
+    return nullptr;
 }
