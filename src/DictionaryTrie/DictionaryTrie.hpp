@@ -38,12 +38,12 @@ class TSTNode {
     int getFreq() { return frequency; }
     void setLetter(const char& c) { letter = c; }
     char getLetter() { return letter; }
-    // void setIsEnd(bool isEnd){isEnd = }
-    // ~TSTNode() {
-    //     delete left;
-    //     delete middle;
-    //     delete right;
-    // }
+
+    ~TSTNode() {
+        delete left;
+        delete middle;
+        delete right;
+    }
 };
 
 struct cmpFreq {
@@ -65,18 +65,18 @@ struct cmpFreq {
 class DictionaryTrie {
   private:
     // TODO: add private members and helper methods here
-    // TSTNode* root;
-    // static void deleteAll(TSTNode* n);
-    // TSTNode* startNode(string prefix);
+    TSTNode* root;
+    void deleteAll(TSTNode* n);
+    TSTNode* startNode(string prefix);
     typedef priority_queue<pair<string, int>, vector<pair<string, int>>,
                            cmpFreq>
         pq;
-    // void findLeaf(string prefix, TSTNode* curr, pq);
+    void findLeaf(string prefix, TSTNode* curr, pq& queue);
 
   public:
-    TSTNode* root;
-    TSTNode* startNode(string prefix);
-    void findLeaf(string prefix, TSTNode* curr, pq& queue);
+    // TSTNode* root;
+    // TSTNode* startNode(string prefix);
+    // void findLeaf(string prefix, TSTNode* curr, pq& queue);
     /* TODO: add function header */
     DictionaryTrie();
 

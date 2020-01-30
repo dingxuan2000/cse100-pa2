@@ -205,16 +205,16 @@ std::vector<string> DictionaryTrie::predictUnderscores(
     string pattern, unsigned int numCompletions) {
     return {};
 }
-// static void deleteAll(TSTNode* n) {
-//     if (n == 0) return;
-//     deleteAll(n->left);
-//     deleteAll(n->middle);
-//     deleteAll(n->right);
-//     delete n;
-// }
+void DictionaryTrie::deleteAll(TSTNode* n) {
+    if (n == 0) return;
+    deleteAll(n->left);
+    deleteAll(n->middle);
+    deleteAll(n->right);
+    delete n;
+}
 
 /* TODO */
-DictionaryTrie::~DictionaryTrie() {}
+DictionaryTrie::~DictionaryTrie() { deleteAll(this->root); }
 TSTNode* DictionaryTrie::startNode(string prefix) {
     TSTNode* ptr;
     ptr = this->root;

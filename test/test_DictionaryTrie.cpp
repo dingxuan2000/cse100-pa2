@@ -42,19 +42,19 @@ using namespace testing;
 //     EXPECT_EQ(dict.find("a"), true);
 //     ASSERT_EQ(dict.find("ab"), true);
 // }
-TEST(DictTrieTests, findLeaf) {
-    DictionaryTrie dict;
-    dict.insert("a", 2);
-    dict.insert("ab", 2);
-    priority_queue<pair<string, int>, vector<pair<string, int>>, cmpFreq> pq;
+// TEST(DictTrieTests, findLeaf) {
+//     DictionaryTrie dict;
+//     dict.insert("a", 2);
+//     dict.insert("ab", 2);
+//     priority_queue<pair<string, int>, vector<pair<string, int>>, cmpFreq> pq;
 
-    dict.findLeaf("a", dict.root, pq);
-    cout << pq.size() << endl;
-    while (!pq.empty()) {
-        cout << pq.top().first << endl;
-        pq.pop();
-    }
-}
+//     dict.findLeaf("a", dict.root, pq);
+//     cout << pq.size() << endl;
+//     while (!pq.empty()) {
+//         cout << pq.top().first << endl;
+//         pq.pop();
+//     }
+// }
 // TEST(DictTrieTests, predictCompletion) {
 //     DictionaryTrie dict;
 //     dict.insert("ab", 2);
