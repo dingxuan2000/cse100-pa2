@@ -6,6 +6,7 @@
 #ifndef DICTIONARY_TRIE_HPP
 #define DICTIONARY_TRIE_HPP
 
+#include <queue>
 #include <string>
 #include <utility>
 #include <vector>
@@ -44,6 +45,19 @@ class TSTNode {
     //     delete right;
     // }
 };
+
+struct cmpFreq {
+    bool operator()(pair<string, int>* w1, pair<string, int>* w2) const {
+        // when two words' frequencies are different
+        if (w1->second != w2->second) {
+            return w1->second < w2->second;
+        }
+        // When the frequencies are same, compare the words
+        else {
+            return w1->first > w2->first;
+        }
+    }
+};
 /**
  * The class for a dictionary ADT, implemented as either
  * a mulit-way trie or a ternary search tree.
@@ -53,7 +67,11 @@ class DictionaryTrie {
     // TODO: add private members and helper methods here
     TSTNode* root;
     // static void deleteAll(TSTNode* n);
-    // TSTNode* startNode(string prefix);
+    TSTNode* startNode(string prefix);
+    typedef priority_queue<pair<string, int>*, vector<pair<string, int>*>,
+                           cmpFreq>
+        pq;
+    string findLeaf(string prefix, TSTNode* curr, pq);
 
   public:
     /* TODO: add function header */

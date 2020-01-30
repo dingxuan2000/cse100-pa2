@@ -131,9 +131,42 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     // prefix,当做start node, 去找 这个start node下面的所有valid word.
     //一旦找到一个node, which frequency>0, 那么用一个helper function
     //从下到上的去将每个char组成一个string.
-    return {};
+    vector<string> vtr;
+    if (startNode(prefix)->middle == 0) {
+        if (startNode(prefix)->getFreq() == 0)
+            return vtr;
+        else {
+            vtr.push_back(prefix);
+            return vtr;
+        }
+    }
+    pq queue;
+    // When the middle subtree is not null
+    TSTNode* start = startNode(prefix)->middle;
+    findLeaf(prefix, start, queue);
+    for (int i = 0; i < numCompletions; i++) {
+        pair<string, int>* currPair;
+        if (!queue.empty()) {
+            currPair = queue.top();
+            queue.pop();
+        }
+        vtr.push_back(currPair->first);
+    }
+    return vtr;
 }
-
+string DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq queue) {
+    if (curr == 0) return 0;
+    if (curr->getFreq() > 0) {
+        pair<string, int>* ptr =
+            new pair<string, int>(prefix + curr->getLetter(), curr->getFreq());
+        queue.push(ptr);
+    }
+    findLeaf(prefix, curr->left, queue);
+    findLeaf(prefix, curr->right, queue);
+    if (curr->middle != 0) {
+        findLeaf(prefix + curr->getLetter(), curr->middle, queue);
+    }
+}
 /* TODO */
 std::vector<string> DictionaryTrie::predictUnderscores(
     string pattern, unsigned int numCompletions) {
@@ -149,9 +182,9 @@ std::vector<string> DictionaryTrie::predictUnderscores(
 
 /* TODO */
 DictionaryTrie::~DictionaryTrie() {}
-TSTNode* startNode(string prefix) {
+TSTNode* DictionaryTrie::startNode(string prefix) {
     TSTNode* ptr;
-    // ptr = this->root;
+    ptr = this->root;
     if (ptr == NULL) return NULL;
     // int index = 0;
     int i = 0;
