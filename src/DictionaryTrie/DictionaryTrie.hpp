@@ -67,13 +67,14 @@ class DictionaryTrie {
     // TODO: add private members and helper methods here
     TSTNode* root;
     // static void deleteAll(TSTNode* n);
-    TSTNode* startNode(string prefix);
+    // TSTNode* startNode(string prefix);
     typedef priority_queue<pair<string, int>*, vector<pair<string, int>*>,
                            cmpFreq>
         pq;
-    string findLeaf(string prefix, TSTNode* curr, pq);
+    void findLeaf(string prefix, TSTNode* curr, pq);
 
   public:
+    TSTNode* startNode(string prefix);
     /* TODO: add function header */
     DictionaryTrie();
 

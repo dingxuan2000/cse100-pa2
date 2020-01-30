@@ -16,7 +16,8 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
     if (word.empty()) return false;
     //当遇到duplicate word时，return false
     if (this->find(word) == true) return false;
-    //如果当前node不是end of word, 那么copy of freq就是0, 否则, cfreq是freq的值
+    //如果当前node不是end of word, 那么copy of freq就是0, 否则,
+    // cfreq是freq的值
     if (this->root == NULL) {
         if (word.length() == 1) {
             auto* newNode = new TSTNode(word[0], freq);
@@ -127,11 +128,12 @@ bool DictionaryTrie::find(string word) const {
 /* TODO */
 vector<string> DictionaryTrie::predictCompletions(string prefix,
                                                   unsigned int numCompletions) {
-    //写一个helper function, returns the node, which is the end of the
+    // 写一个helper function, returns the node, which is the end of the
     // prefix,当做start node, 去找 这个start node下面的所有valid word.
-    //一旦找到一个node, which frequency>0, 那么用一个helper function
-    //从下到上的去将每个char组成一个string.
+    // 一旦找到一个node, which frequency>0, 那么用一个helper function
+    // 从下到上的去将每个char组成一个string.
     vector<string> vtr;
+    pq queue;
     if (startNode(prefix)->middle == 0) {
         if (startNode(prefix)->getFreq() == 0)
             return vtr;
@@ -140,7 +142,15 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
             return vtr;
         }
     }
-    pq queue;
+    // when the end of prefix's node has middle child, then still need to check
+    // if the startNode has frequencies, if the prefix is also a word, make as
+    // a pair, and push into the queue.
+    if (startNode(prefix)->getFreq() != 0) {
+        pair<string, int>* ptr =
+            new pair<string, int>(prefix, startNode(prefix)->getFreq());
+        queue.push(ptr);
+    }
+
     // When the middle subtree is not null
     TSTNode* start = startNode(prefix)->middle;
     findLeaf(prefix, start, queue);
@@ -154,8 +164,8 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     }
     return vtr;
 }
-string DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq queue) {
-    if (curr == 0) return 0;
+void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq queue) {
+    if (curr == 0) return;  // maybe the problem
     if (curr->getFreq() > 0) {
         pair<string, int>* ptr =
             new pair<string, int>(prefix + curr->getLetter(), curr->getFreq());
@@ -191,11 +201,9 @@ TSTNode* DictionaryTrie::startNode(string prefix) {
     while ((ptr != NULL) && (i < prefix.length())) {
         if (ptr->getLetter() < prefix[i]) {
             ptr = ptr->right;
-            // i--;
 
         } else if (prefix[i] < ptr->getLetter()) {
             ptr = ptr->left;
-            // i--;
         } else {
             // When found the char in word, then go to the middle child, and
             // go to the next char of the word
