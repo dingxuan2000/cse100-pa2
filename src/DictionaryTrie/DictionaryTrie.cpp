@@ -197,6 +197,7 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
     if (startNode(prefix) == 0) {
         return vtr;
     }
+    if (numCompletions == 0) return vtr;
     // If the startNode has no middle child, then check if the prefix is a valid
     // word
     else if (startNode(prefix)->middle == 0) {
