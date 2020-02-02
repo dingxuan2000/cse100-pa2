@@ -64,6 +64,8 @@ class DictionaryTrie {
                            cmpFreq>
         pq;
     void findLeaf(string prefix, TSTNode* curr, pq& queue);
+    void predict(string pattern, TSTNode* curr, pq& queue, string predict);
+    TSTNode* find_next_Node(TSTNode* ptr ,string prefix);
 
   public:
     /* TODO: add function header

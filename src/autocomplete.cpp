@@ -79,8 +79,18 @@ int main(int argc, char** argv) {
 
         // TODO: call predictCompletions() to return the vector, concludes all
         // the valid word
+        // Note: If the user's input (word) with no underscore, then you should
+        // call predictCompletions(); But if word has underscores, should call
+        // predictUnderscores()
         vector<string> vet;
-        vet = dt->predictCompletions(word, numberOfCompletions);
+        for (int i = 0; i < word.length(); i++) {
+            if (word[i] == '_') {
+                vet = dt->predictUnderscores(word, numberOfCompletions);
+                break;
+            } else
+                vet = dt->predictCompletions(word, numberOfCompletions);
+        }
+
         for (int i = 0; i < vet.size(); i++) {
             cout << vet.at(i) << endl;
         }

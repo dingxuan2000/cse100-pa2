@@ -1,38 +1,5 @@
-Reading file: data/short_dict.txt
+Reading file: data/shuffled_freq_dict.txt
 Enter a prefix/pattern to search for:
 Enter a number of completions:
-a baking
-a baking sheet
-a bakery
-a baker
-a baked
-a baking sheet and
-a baking pan
-a baking dish
-a baking sheet with
-a baked potato
-a bake
-a bake sale
-a baking sheet with parchment
-a bakery and
-a baking sheet and bake
-a baking pan and
-a baking stone
-a bakery in
-a baking sheet lined
-a baking sheet lined with
-a baking pan with
-a baking dish and
-a baking sheet in
-a baking sheet in a
-a baking stone in the
-a baking pan and bake
-a baking sheet and place
-a baking sheet and roast
-a baking sheet and toast
-a baking sheet and set
-a baking sheet with cooking
-a baking sheet and keep
-a baking sheet coated with
-a baking sheet with a
+a pump
 Continue? (y/n)

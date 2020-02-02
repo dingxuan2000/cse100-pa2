@@ -272,8 +272,152 @@ void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq& queue) {
 /* TODO */
 std::vector<string> DictionaryTrie::predictUnderscores(
     string pattern, unsigned int numCompletions) {
-    return {};
+    vector<string> vtr;
+    pq queue;
+    TSTNode* start = nullptr;
+    // don't forget the numCompletions == 0's edge case
+    if (numCompletions == 0) return vtr;
+    // if the first char in pattern is wildcard, then the startNode should be
+    // root and we still need to check if the pattern has next char, and if the
+    // root has the next layer
+    //首先判断第一个char是不是wildcard, 如果是的--> startNode从root开始，
+    //如果不是的话，通过startNode()去找第一个char的位置
+    if (pattern[0] == '_') {
+        start = this->root;
+    } else {
+        // if not wildcard, then the first char as the substring, and call
+        // startNode to determine where it is in trie, as the prefix(only one
+        // char)! starts with starting letter of pattern
+        start = startNode(pattern.substr(0, 1));
+    }
+    //如果这个startNode不存在，要不就是root=nullptr,
+    //要不就是pattern的第一个char就不存在这个trie里面，那么直接return empty
+    // vector
+    // if cannot find
+    if (start == nullptr)
+        return vtr;
+    else {
+        //如果startNode有值的话，就call predict()去将符合pattern的valid word塞进
+        // pq里面
+        string prediction("");  // will be passed into helper function
+        predict(pattern, start, queue, prediction);
+
+        for (int i = 0; i < numCompletions; i++) {
+            pair<string, int> currPair;
+            // When the pq is not empty, pop each pair and push the first
+            // element in pair to the vector
+            if (!queue.empty()) {
+                currPair = queue.top();
+                queue.pop();
+            }
+            // before the for loop finished, if the pq is empty now, then break
+            // the loop
+            else {
+                break;
+            }
+            vtr.push_back(currPair.first);
+        }
+        return vtr;
+    }
 }
+
+void DictionaryTrie::predict(string pattern, TSTNode* curr, pq& queue,
+                             string prediction) {
+    //传进来的startNode不可能是0了，因为在大function里面判断过了
+    if (curr == 0) return;
+    //如果pattern只有一个char的话
+    if ((pattern.length() == 1)) {
+        //首先，如果这一个char是wildcard的话，那么传进来的curr就是root,
+        //然后traverse the trie, 但是只能去left and right child,
+        // 因为如果去middle的话，那这个word length就不会是1了
+        if (pattern.substr(0, 1) == "_")  // wild card base case still need to
+                                          // look at all left and right branch .
+        {
+            predict(pattern, curr->left, queue, prediction);
+            predict(pattern, curr->right, queue, prediction);
+            // push all candidates which frequency >1.
+            if (curr->getFreq() > 0)
+                queue.push(
+                    make_pair(prediction + curr->getLetter(), curr->getFreq()));
+
+        }
+        //如果第一个char不是wildcard的话，可以通过find_next_Node去找到第一个char的位置
+        else {  // case is not a wild card.
+            curr = find_next_Node(
+                curr, pattern.substr(0, 1));  // find that vaild node.
+            //如果curr是nullptr的话，需要return,
+            //否则可能会造成下一行的nullptr->getFreq(), 将会有segfault!!!
+            if (curr == 0) return;  // don't forget this case!!!
+            if (curr->getFreq() > 0) {
+                queue.push(
+                    make_pair(prediction + curr->getLetter(), curr->getFreq()));
+            }
+        }
+
+    }
+    //当这个pattern不止有一个char时
+    else {
+        //首先，还是先判断pattern的第一个char是不是wildcard, 如果是wildcard,
+        //走left, right, middle. 如果走middle,
+        //每次都需要将当前的letter加到prediction里， 然后pattern.length-1
+        if (pattern.substr(0, 1) == "_") {
+            predict(pattern, curr->left, queue, prediction);
+            predict(pattern, curr->right, queue, prediction);
+            predict(pattern.substr(1, pattern.length() - 1), curr->middle,
+                    queue, prediction + curr->getLetter());
+        }
+        if (pattern.substr(0, 1) == " ") {
+            predict(pattern.substr(1, pattern.length() - 1), curr->middle,
+                    queue, prediction + " ");
+        }
+        // if the first char is not wildcard, we need to use find_next_Node
+        // to find the curr's location
+        else {
+            curr = find_next_Node(
+                curr,
+                pattern.substr(0, 1));  // if current pattern is a char, find
+                                        // next node that contains this char if
+                                        // not found curr is equal to null.
+            // if curr is nullptr, return
+            if (curr == 0) return;
+            // else, use predict() to traverse the middle subtree
+            predict(pattern.substr(1, pattern.length() - 1), curr->middle,
+                    queue,
+                    prediction +
+                        curr->getLetter());  // recurrsively calls the function
+                                             // now the curr should be pointing
+                                             // to the next char.
+        }
+    }
+}
+// this is different from startNode(), since the ptr is not always starts at
+// root, we need to treat each char in pattern as a startNode
+TSTNode* DictionaryTrie::find_next_Node(TSTNode* ptr, string prefix) {
+    if (ptr == NULL) return nullptr;
+    // int index = 0;
+    int i = 0;
+    while ((ptr != NULL) && (i < prefix.length())) {
+        if (ptr->getLetter() < prefix[i]) {
+            ptr = ptr->right;
+
+        } else if (prefix[i] < ptr->getLetter()) {
+            ptr = ptr->left;
+
+        } else {
+            // When found the char in word, then go to the middle child, and
+            // go to the next char of the word
+            if ((i == prefix.length() - 1))
+                return ptr;
+            else {
+                ptr = ptr->middle;
+                i++;
+            }
+        }
+    }
+
+    return nullptr;  // return ptr; because ptr now is nullptr.
+}
+
 // To delete all the memory of nodes in TST, will be called in ~DictionaryTrie()
 void DictionaryTrie::deleteAll(TSTNode* n) {
     if (n == 0) return;

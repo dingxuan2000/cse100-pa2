@@ -25,20 +25,20 @@ TEST(DictTrieTests, EMPTY_TEST) {
     DictionaryTrie dict;
     ASSERT_EQ(dict.find("abrakadabra"), false);
 }
-TEST(DictTrieTests, INSERT) {
-    DictionaryTrie dict;
-    dict.insert("a", 2);
-    dict.insert("bc", 3);
-    dict.insert("ba", 3);
-    // EXPECT_EQ(dict.insert("a", 2), false);
-    // EXPECT_EQ(dict.insert("bc", 2), false);
-    // EXPECT_EQ(dict.insert("ba", 3), false);
-    // EXPECT_EQ(dict.insert("def", 5), true);
-    vector<string> vtr;
-    // vtr.push_back("sea");
-    // ASSERT_EQ(dict.predictCompletions("a", 0), vtr);
-    ASSERT_EQ(dict.predictCompletions("s", 1), vtr);
-}
+// TEST(DictTrieTests, INSERT) {
+//     DictionaryTrie dict;
+//     dict.insert("a", 2);
+//     dict.insert("bc", 3);
+//     dict.insert("ba", 3);
+// EXPECT_EQ(dict.insert("a", 2), false);
+// EXPECT_EQ(dict.insert("bc", 2), false);
+// EXPECT_EQ(dict.insert("ba", 3), false);
+// EXPECT_EQ(dict.insert("def", 5), true);
+// vector<string> vtr;
+// vtr.push_back("sea");
+// ASSERT_EQ(dict.predictCompletions("a", 0), vtr);
+// ASSERT_EQ(dict.predictCompletions("s", 1), vtr);
+//}
 // TEST(DictTrieTests, FIND) {
 //     DictionaryTrie dict;
 //     dict.insert("shell", 2);
@@ -97,5 +97,47 @@ TEST(DictTrieTests, INSERT) {
 
 //     EXPECT_FALSE(dict.insert("shells", 40));
 // }
+TEST(DictTrieTests, PredictUnderscores_TEST) {
+    DictionaryTrie dict;
+    // dict.insert("shells", 50);
+    // dict.insert("b", 3);
+    // dict.insert("the", 2);
+    // dict.insert("sells", 2000);
+    // dict.insert("sea", 100);
+    // dict.insert("she", 6000);
+    // dict.insert("shore", 2);
+    dict.insert("a pump", 4);
+
+    vector<string> start_with_s;
+
+    start_with_s = dict.predictUnderscores("a____p", 2);
+    for (int i = 0; i < start_with_s.size(); i++) {
+        cout << start_with_s.at(i) << endl;
+    }
+    // ASSERT_EQ(dict.predictUnderscores("", 0), start_with_s);
+    // start_with_s.push_back("she");
+
+    // ASSERT_EQ(dict.predictUnderscores("_____", 1), start_with_s);
+    // ASSERT_EQ(dict.predictUnderscores("s_l_s", 1), start_with_s);
+    // ASSERT_EQ(dict.predictUnderscores("_e___", 1), start_with_s);
+    // ASSERT_EQ(dict.predictUnderscores("se__s", 1), start_with_s);
+    // ASSERT_EQ(dict.predictUnderscores("s_e", 1), start_with_s);
+    // start_with_s.push_back("shells");
+    // ASSERT_EQ(dict.predictCompletions("s", 2), start_with_s);
+    // vector<string> start_with_by;
+    // start_with_by.push_back("b");
+    // ASSERT_EQ(dict.predictUnderscores("b", 1), start_with_by);
+    // ASSERT_EQ(dict.predictCompletions("by", 2), start_with_by);
+
+    // EXPECT_TRUE(dict.find("shells"));
+    // EXPECT_TRUE(dict.find("by"));
+    // EXPECT_TRUE(dict.find("the"));
+    // EXPECT_TRUE(dict.find("sells"));
+    // EXPECT_TRUE(dict.find("sea"));
+    // EXPECT_TRUE(dict.find("she"));
+    // EXPECT_TRUE(dict.find("shore"));
+
+    // EXPECT_FALSE(dict.insert("shells", 40));
+}
 
 /* TODO */
