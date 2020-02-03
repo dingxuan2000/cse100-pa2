@@ -1,5 +1,7 @@
-Reading file: data/shuffled_freq_dict.txt
+Reading file: data/my_freq_dict.txt
 Enter a prefix/pattern to search for:
 Enter a number of completions:
-a pump
+ab a
+ab
+abc
 Continue? (y/n)

@@ -21,18 +21,21 @@ class TSTNode {
   private:
     int frequency;
     char letter;
+    int Max_frequency;
 
   public:
     TSTNode* left;
     TSTNode* middle;
     TSTNode* right;
-    TSTNode() : frequency(0) { left = middle = right = 0; }
-    TSTNode(const char& character, const int& freq)
-        : letter(character), frequency(freq) {
+    TSTNode() : frequency(0), Max_frequency(0) { left = middle = right = 0; }
+    TSTNode(const char& character, const int& freq, const int& max_freq)
+        : letter(character), frequency(freq), Max_frequency(max_freq) {
         left = middle = right = 0;
     }
     void setFreq(const int& f) { frequency = f; }
     int getFreq() { return frequency; }
+    void set_Max_Freq(const int& f) { Max_frequency = f; }
+    int get_Max_Freq() { return Max_frequency; }
     void setLetter(const char& c) { letter = c; }
     char getLetter() { return letter; }
 };
@@ -42,11 +45,11 @@ struct cmpFreq {
     bool operator()(pair<string, int>& w1, pair<string, int>& w2) const {
         // when two words' frequencies are different
         if (w1.second != w2.second) {
-            return w1.second < w2.second;
+            return w1.second > w2.second;
         }
         // When the frequencies are same, compare the words
         else {
-            return w1.first > w2.first;
+            return w1.first < w2.first;
         }
     }
 };
@@ -57,21 +60,23 @@ struct cmpFreq {
 class DictionaryTrie {
   private:
     // TODO: add private members and helper methods here
-    TSTNode* root;
+     TSTNode* root;
     void deleteAll(TSTNode* n);
     TSTNode* startNode(string prefix);
     typedef priority_queue<pair<string, int>, vector<pair<string, int>>,
                            cmpFreq>
         pq;
-    void findLeaf(string prefix, TSTNode* curr, pq& queue);
+    void findLeaf(string prefix, TSTNode* curr, pq& queue, int numCompletions);
     void predict(string pattern, TSTNode* curr, pq& queue, string predict);
-    TSTNode* find_next_Node(TSTNode* ptr ,string prefix);
+    TSTNode* find_next_Node(TSTNode* ptr, string prefix);
 
   public:
     /* TODO: add function header
      * initialized object with root = 0,
      * initialized object with char and frequency
      */
+    //TSTNode* root;
+    //void findLeaf(string prefix, TSTNode* curr, pq& queue, int numCompletions);
     DictionaryTrie();
 
     /* TODO: add function header

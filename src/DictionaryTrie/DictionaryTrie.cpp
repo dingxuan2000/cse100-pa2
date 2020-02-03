@@ -34,25 +34,26 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
     if (this->root == NULL) {
         // 1. When the word is one character, insert as root directly.
         if (word.length() == 1) {
-            TSTNode* newNode = new TSTNode(word[0], freq);
+            TSTNode* newNode = new TSTNode(word[0], freq, freq);
             this->root = newNode;
             return true;
         }
         // 2. insert the remaining node as root's middle child, until reach to
         // the end of the word.
         else {
-            TSTNode* newNode = new TSTNode(word[0], 0);
+            TSTNode* newNode = new TSTNode(word[0], 0, 0);
             this->root = newNode;
             TSTNode* curr = root;
             int i = 1;
             int cfreq;
+            int maxfreq = freq;
             while (i < word.length()) {
                 // if not reach to the end of the word, freq is 0
                 if (i != word.length() - 1) cfreq = 0;
                 // otherwise, freq should be assigned to the end of the word
                 else
                     cfreq = freq;
-                curr->middle = new TSTNode(word[i], cfreq);
+                curr->middle = new TSTNode(word[i], cfreq, maxfreq);
                 // For the first word, have to go to middle child
                 curr = curr->middle;
                 i++;
@@ -71,6 +72,7 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
         // case1: the char in word is greater than current node's data, go to
         // right
         if (curr->getLetter() < word[i]) {
+            if (curr->get_Max_Freq() < freq) curr->set_Max_Freq(freq);
             if (curr->right != 0) curr = curr->right;
             // if curr node has no right child, create a new node, with data and
             // appropriate frequency
@@ -79,7 +81,7 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
                     cfreq = 0;
                 else
                     cfreq = freq;
-                TSTNode* newNode = new TSTNode(word[i], cfreq);
+                TSTNode* newNode = new TSTNode(word[i], cfreq, cfreq);
                 curr->right = newNode;
                 curr = curr->right;
             }
@@ -88,6 +90,7 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
         // case 2: the char in word is smaller than current node's data, go to
         // left
         else if (word[i] < curr->getLetter()) {
+            if (curr->get_Max_Freq() < freq) curr->set_Max_Freq(freq);
             if (curr->left != 0)
                 curr = curr->left;
             else {
@@ -97,7 +100,7 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
                     cfreq = 0;
                 else
                     cfreq = freq;
-                auto* newNode = new TSTNode(word[i], cfreq);
+                auto* newNode = new TSTNode(word[i], cfreq, cfreq);
                 curr->left = newNode;
                 curr = curr->left;
                 // i++;
@@ -107,6 +110,7 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
         // case 3: the char in word is same as current node's data
         else {
             // when the current node has middle child
+            if (curr->get_Max_Freq() < freq) curr->set_Max_Freq(freq);
             if (curr->middle != 0) {
                 // if now has reached to the end of the word, set current node's
                 // frequency to be a new frequency of the inserted word.
@@ -132,7 +136,7 @@ bool DictionaryTrie::insert(string word, unsigned int freq) {
                 else
                     cfreq = freq;
 
-                TSTNode* newNode = new TSTNode(word[i], cfreq);
+                TSTNode* newNode = new TSTNode(word[i], cfreq, cfreq);
                 curr->middle = newNode;
                 curr = curr->middle;
             }
@@ -193,6 +197,7 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
                                                   unsigned int numCompletions) {
     vector<string> vtr;
     pq queue;
+    int max_freq = this->root->get_Max_Freq();
     // If the end node of prefix is null, return am empty vector
     if (startNode(prefix) == 0) {
         return vtr;
@@ -222,10 +227,11 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
         // When redirect the srartNode
         TSTNode* start = startNode(prefix)->middle;
         // call findLeaf to push every valid word into priority_queue
-        findLeaf(prefix, start, queue);
-
+        findLeaf(prefix, start, queue, numCompletions);
+        if (queue.size() > numCompletions) queue.pop();
         for (int i = 0; i < numCompletions; i++) {
             pair<string, int> currPair;
+            // if (i == 0) queue.pop();
             // when the pq is not empty, pop each pair and push the first
             // element in pair to the vector
             if (!queue.empty()) {
@@ -238,7 +244,7 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
                 break;
             }
 
-            vtr.push_back(currPair.first);
+            vtr.insert(vtr.begin(), currPair.first);
         }
         return vtr;
     }
@@ -249,34 +255,42 @@ vector<string> DictionaryTrie::predictCompletions(string prefix,
  * A helper function to make a pair for each valid word and its frequencies,
  * then push into sorted pq.
  */
-void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq& queue) {
+void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq& queue,
+                              int numCompletions) {
     if (curr == 0) return;
+    //需要将pq的size固定住，根据numCompletions进行判断
+    // if (numCompletions == 0) return;
+
     // if the curr node's freq is greater then 0, then make a pair of its data
     // and freq , then push into queue.
     if (curr->getFreq() > 0) {
-        // pair<string, int>* ptr =
-        //     new pair<string, int>(prefix + curr->getLetter(),
-        //     curr->getFreq());
-        queue.push(make_pair(prefix + curr->getLetter(), curr->getFreq()));
+        if (queue.size() != numCompletions + 1)
+            queue.push(make_pair(prefix + curr->getLetter(), curr->getFreq()));
+        else {
+            queue.pop();
+            queue.push(make_pair(prefix + curr->getLetter(), curr->getFreq()));
+        }
     }
     // traverse the whole trie
-    findLeaf(prefix, curr->left, queue);
-    findLeaf(prefix, curr->right, queue);
+    findLeaf(prefix, curr->left, queue, numCompletions);
+    findLeaf(prefix, curr->right, queue, numCompletions);
     // Once the curr's middle is not null, append the curr node's data to
     // prefix, and go to
     // it's middle child
     if (curr->middle != 0) {
-        findLeaf(prefix + curr->getLetter(), curr->middle, queue);
+        findLeaf(prefix + curr->getLetter(), curr->middle, queue,
+                 numCompletions);
     }
 }
 /* TODO */
 std::vector<string> DictionaryTrie::predictUnderscores(
     string pattern, unsigned int numCompletions) {
-    vector<string> vtr;
+    vector<string> vtr1;
+    // vector<string> vtr2;
     pq queue;
     TSTNode* start = nullptr;
     // don't forget the numCompletions == 0's edge case
-    if (numCompletions == 0) return vtr;
+    if (numCompletions == 0) return vtr1;
     // if the first char in pattern is wildcard, then the startNode should be
     // root and we still need to check if the pattern has next char, and if the
     // root has the next layer
@@ -295,29 +309,35 @@ std::vector<string> DictionaryTrie::predictUnderscores(
     // vector
     // if cannot find
     if (start == nullptr)
-        return vtr;
+        return vtr1;
     else {
         //如果startNode有值的话，就call predict()去将符合pattern的valid word塞进
         // pq里面
         string prediction("");  // will be passed into helper function
         predict(pattern, start, queue, prediction);
 
-        for (int i = 0; i < numCompletions; i++) {
-            pair<string, int> currPair;
-            // When the pq is not empty, pop each pair and push the first
-            // element in pair to the vector
-            if (!queue.empty()) {
-                currPair = queue.top();
-                queue.pop();
-            }
-            // before the for loop finished, if the pq is empty now, then break
-            // the loop
-            else {
-                break;
-            }
-            vtr.push_back(currPair.first);
+        while (!queue.empty()) {
+            vtr1.insert(vtr1.begin(), queue.top().first);
+            queue.pop();
         }
-        return vtr;
+        // for (int i = 0; i < numCompletions; i++) {
+        // pair<string, int> currPair;
+        // When the pq is not empty, pop each pair and push the first
+        // element in pair to the vector
+        vector<string> vtr2 =
+            std::vector<string>(vtr1.begin(), vtr1.begin() + numCompletions);
+
+        // if (!queue.empty()) {
+        //     currPair = queue.top();
+        //     queue.pop();
+        // }
+        // // before the for loop finished, if the pq is empty now, then break
+        // // the loop
+        // else {
+        //     break;
+        // }
+        //}
+        return vtr2;
     }
 }
 
