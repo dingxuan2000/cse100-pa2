@@ -11,6 +11,7 @@
 #define DICTIONARY_TRIE_HPP
 
 #include <queue>
+#include <stack>
 #include <string>
 #include <utility>
 #include <vector>
@@ -53,6 +54,7 @@ struct cmpFreq {
         }
     }
 };
+
 /**
  * The class for a dictionary ADT, implemented as either
  * a mulit-way trie or a ternary search tree.
@@ -60,12 +62,13 @@ struct cmpFreq {
 class DictionaryTrie {
   private:
     // TODO: add private members and helper methods here
-     TSTNode* root;
+    TSTNode* root;
     void deleteAll(TSTNode* n);
     TSTNode* startNode(string prefix);
     typedef priority_queue<pair<string, int>, vector<pair<string, int>>,
                            cmpFreq>
         pq;
+
     void findLeaf(string prefix, TSTNode* curr, pq& queue, int numCompletions);
     void predict(string pattern, TSTNode* curr, pq& queue, string predict);
     TSTNode* find_next_Node(TSTNode* ptr, string prefix);
@@ -75,8 +78,6 @@ class DictionaryTrie {
      * initialized object with root = 0,
      * initialized object with char and frequency
      */
-    //TSTNode* root;
-    //void findLeaf(string prefix, TSTNode* curr, pq& queue, int numCompletions);
     DictionaryTrie();
 
     /* TODO: add function header

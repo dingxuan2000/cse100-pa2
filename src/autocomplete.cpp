@@ -71,6 +71,7 @@ int main(int argc, char** argv) {
 
     char cont = 'y';
     unsigned int numberOfCompletions;
+    vector<string> vet;
     while (cont == 'y') {
         cout << "Enter a prefix/pattern to search for:" << endl;
         getline(cin, word);
@@ -82,10 +83,11 @@ int main(int argc, char** argv) {
         // Note: If the user's input (word) with no underscore, then you should
         // call predictCompletions(); But if word has underscores, should call
         // predictUnderscores()
-        vector<string> vet;
+        // vector<string> vet;
         for (int i = 0; i < word.length(); i++) {
             if (word[i] == '_') {
                 vet = dt->predictUnderscores(word, numberOfCompletions);
+
                 break;
             } else
                 vet = dt->predictCompletions(word, numberOfCompletions);
@@ -95,10 +97,13 @@ int main(int argc, char** argv) {
             cout << vet.at(i) << endl;
         }
 
+        vector<string>().swap(vet);
+        // vector<string>().swap(vet);
         cout << "Continue? (y/n)" << endl;
         cin >> cont;
         cin.ignore();
     }
+
     delete dt;
     return 0;
 }

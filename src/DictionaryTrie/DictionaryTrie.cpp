@@ -282,20 +282,22 @@ void DictionaryTrie::findLeaf(string prefix, TSTNode* curr, pq& queue,
                  numCompletions);
     }
 }
-/* TODO */
+/* TODO
+ * Parameter: pattern, numCompletions
+ * To implement the wildcard by calling startNode() and predict()
+ */
 std::vector<string> DictionaryTrie::predictUnderscores(
     string pattern, unsigned int numCompletions) {
     vector<string> vtr1;
     // vector<string> vtr2;
     pq queue;
+    stack<pair<string, int>> reverse_queue;
     TSTNode* start = nullptr;
     // don't forget the numCompletions == 0's edge case
     if (numCompletions == 0) return vtr1;
     // if the first char in pattern is wildcard, then the startNode should be
     // root and we still need to check if the pattern has next char, and if the
     // root has the next layer
-    //首先判断第一个char是不是wildcard, 如果是的--> startNode从root开始，
-    //如果不是的话，通过startNode()去找第一个char的位置
     if (pattern[0] == '_') {
         start = this->root;
     } else {
@@ -304,52 +306,50 @@ std::vector<string> DictionaryTrie::predictUnderscores(
         // char)! starts with starting letter of pattern
         start = startNode(pattern.substr(0, 1));
     }
-    //如果这个startNode不存在，要不就是root=nullptr,
-    //要不就是pattern的第一个char就不存在这个trie里面，那么直接return empty
-    // vector
-    // if cannot find
-    if (start == nullptr)
+    // if startNode is nullptr. then return empty vector
+    if (start == nullptr) {
+        // delete start;
         return vtr1;
-    else {
-        //如果startNode有值的话，就call predict()去将符合pattern的valid word塞进
-        // pq里面
+    } else {
+        // if startNode has value, call oredict() to push valid word into pq
         string prediction("");  // will be passed into helper function
         predict(pattern, start, queue, prediction);
 
         while (!queue.empty()) {
-            vtr1.insert(vtr1.begin(), queue.top().first);
+            // vtr1.push_back(queue.top().first);
+            reverse_queue.push(queue.top());
+            // vtr1.insert(vtr1.begin(), queue.top().first);
             queue.pop();
         }
-        // for (int i = 0; i < numCompletions; i++) {
-        // pair<string, int> currPair;
-        // When the pq is not empty, pop each pair and push the first
-        // element in pair to the vector
-        vector<string> vtr2 =
-            std::vector<string>(vtr1.begin(), vtr1.begin() + numCompletions);
 
-        // if (!queue.empty()) {
-        //     currPair = queue.top();
-        //     queue.pop();
-        // }
-        // // before the for loop finished, if the pq is empty now, then break
-        // // the loop
-        // else {
-        //     break;
-        // }
-        //}
-        return vtr2;
+        for (int i = 0; i < numCompletions; i++) {
+            pair<string, int> currPair;
+            // When the pq is not empty, pop each pair and push the first
+            // element in pair to the vector
+            if (!reverse_queue.empty()) {
+                currPair = reverse_queue.top();
+                reverse_queue.pop();
+            } else {
+                break;
+            }
+            vtr1.push_back(currPair.first);
+        }
+
+        return vtr1;
     }
 }
-
+/**
+ * To push every node into priority queue in ascending order, and then push into
+ * stack, when poping the pair in the stack, and then push into vector, it will
+ * in an descending order in vector.
+ */
 void DictionaryTrie::predict(string pattern, TSTNode* curr, pq& queue,
                              string prediction) {
-    //传进来的startNode不可能是0了，因为在大function里面判断过了
     if (curr == 0) return;
-    //如果pattern只有一个char的话
     if ((pattern.length() == 1)) {
-        //首先，如果这一个char是wildcard的话，那么传进来的curr就是root,
-        //然后traverse the trie, 但是只能去left and right child,
-        // 因为如果去middle的话，那这个word length就不会是1了
+        // First, if this only one char is wildcard, then curr is root.
+        // then, traverse the trie, but can only go left and right subtrie,
+        // since if go middle, the word length can't be 1 anymore.
         if (pattern.substr(0, 1) == "_")  // wild card base case still need to
                                           // look at all left and right branch .
         {
@@ -361,12 +361,12 @@ void DictionaryTrie::predict(string pattern, TSTNode* curr, pq& queue,
                     make_pair(prediction + curr->getLetter(), curr->getFreq()));
 
         }
-        //如果第一个char不是wildcard的话，可以通过find_next_Node去找到第一个char的位置
+        // If the fist char is not wildcard, then call find_next_Node to find
+        // the first char's location
         else {  // case is not a wild card.
             curr = find_next_Node(
                 curr, pattern.substr(0, 1));  // find that vaild node.
-            //如果curr是nullptr的话，需要return,
-            //否则可能会造成下一行的nullptr->getFreq(), 将会有segfault!!!
+            // if curr is nullptr, return; otherwise, may cause segfault
             if (curr == 0) return;  // don't forget this case!!!
             if (curr->getFreq() > 0) {
                 queue.push(
@@ -375,11 +375,11 @@ void DictionaryTrie::predict(string pattern, TSTNode* curr, pq& queue,
         }
 
     }
-    //当这个pattern不止有一个char时
+    // When the pattern has more than one char
     else {
-        //首先，还是先判断pattern的第一个char是不是wildcard, 如果是wildcard,
-        //走left, right, middle. 如果走middle,
-        //每次都需要将当前的letter加到prediction里， 然后pattern.length-1
+        // First, check the first char of pattern is wildcard or not, if
+        // it's wildcard, then go left, right, middle. If go middle, should
+        // put the current letter into prediction string, and pattern.length-1.
         if (pattern.substr(0, 1) == "_") {
             predict(pattern, curr->left, queue, prediction);
             predict(pattern, curr->right, queue, prediction);
